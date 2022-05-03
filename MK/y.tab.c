@@ -1372,7 +1372,7 @@ int main( int argc, char **argv ){
 	hp2 = (int) atof(argv[1]); argc--; argv++;
 	printf("PARTIDA\n JAX: %d HP\n KABAL: %d HP\n",hp1,hp2);
 	if(yyparse()==0)
-		printf("\nFIN");
+		printf("\nFIN\n");
 }
 
 void yyerror(char *s){

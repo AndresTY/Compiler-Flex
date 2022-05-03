@@ -1,25 +1,21 @@
 GCC = gcc
 FLEX = flex
-
+BISON = bison
 V1 = 100
 V2 = 100
 
 FILE = game
 PROGS = mk
 
-file = 
+compiler:
+	@$(FLEX) $(FILE).l & $(BISON) -dy $(FILE).y
 
-flex:
-	@$(FLEX) $(FILE).l 
 mk:
-	@$(GCC) lex.yy.c -o $@
+	@$(GCC) lex.yy.c y.tab.c -o $@
+
 clean:
 	@$(RM) $(PROGS) *.o & clear
 
 run:
 	@./$(PROGS) $(V1) $(V2)
-
-run-file: $(file)
-	@./$(PROGS) $(V1) $(V2) < $(file)
-	
 
