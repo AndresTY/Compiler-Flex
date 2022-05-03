@@ -14,21 +14,25 @@
 	char *n2 = "SINDEL";
 	int is_alive(int hp);
 	void combinho(char* s);
+	int is_special(char* y,char* s);
+	int scorpion_special(char* s);
+	int sindel_special(char* s);
 %}
 
 %option noyywrap
 
-/* STANDAR FRIENDSHIP = Back Front Down Down X */
-FRIENDSHIP BFDDX 
+/* STANDAR FRIENDSHIP = Back(L) Front(R) Down Down X */
+FRIENDSHIP LRDDX 
 /* STANDAR BABALITY = Down Down Up Up Y*/ 
 BABALITY DDUUY
-SCORPION_FATALITIES FBFA|BFBDX
-SINDEL_FATALITIES BFBFA|DDDB
+SCORPION_FATALITIES RLRA|LRLDX
+SINDEL_FATALITIES LRLRA|DDDB
 GLOBAL_FATALITIES {FRIENDSHIP}|{BABALITY}|{HIT}
 PERSON SCORPION|SINDEL
 HIT X|Y|B|A
-COMBO {HIT}+
-
+MOVES L|R|U|D
+SPECIAL {HIT}+{MOVES}*|{MOVES}*{HIT}+
+COMBO {SPECIAL}+
 %%
 
 {PERSON}-{COMBO} { combinho(yytext); }
@@ -41,19 +45,80 @@ COMBO {HIT}+
 %%
 
 void combinho(char * s){
-	 char* temp = strtok(s,"-");
-	if(strcmp(temp,n1)==0){
-		if (hp1>0 && is_alive(hp2)){
-			temp = strtok(NULL,"-");
-			hp2 = DoDamage(hp2,split(temp));
-			printf("%s have %d HP",n2,hp2);
-		}else{printf("\nESE PERSONAJE NO ESTA EN EL JUEGO O EL PERSONAJE YA ESTA MUERTO");} 
-	}else if(strcmp(temp,n2)==0){
-		if (hp2>0 && is_alive(hp1)){
-			temp = strtok(NULL,"-");
-			hp1 = DoDamage(hp1,split(temp));
-			printf("%s have %d HP",n1,hp1);
-		}else{printf("\nESE PERSONAJE NO ESTA EN EL JUEGO O EL PERSONAJE YA ESTA MUERTO");} 
+	char* temp = strtok(s,"-");
+	char* comb = strtok(NULL,"-");
+	int special = is_special(temp,comb);
+	if(special==-1){
+		if(strcmp(temp,n1)==0){
+			if (hp1>0 && is_alive(hp2)){
+				hp2 = DoDamage(hp2,split(comb));
+				printf("%s have %d HP",n2,hp2);
+			}else{printf("\nESE PERSONAJE NO ESTA EN EL JUEGO O EL PERSONAJE YA ESTA MUERTO");} 
+		}else if(strcmp(temp,n2)==0){
+			if (hp2>0 && is_alive(hp1)){
+				hp1 = DoDamage(hp1,split(comb));
+				printf("%s have %d HP",n1,hp1);
+			}else{printf("\nESE PERSONAJE NO ESTA EN EL JUEGO O EL PERSONAJE YA ESTA MUERTO");} 
+		}
+	}else{
+		if(strcmp(temp,n1)==0){
+			if (hp1>0 && is_alive(hp2)){
+				hp2 = DoDamage(hp2,special);
+				printf("%s have %d HP",n2,hp2);
+			}else{printf("\nESE PERSONAJE NO ESTA EN EL JUEGO O EL PERSONAJE YA ESTA MUERTO");} 
+		}else if(strcmp(temp,n2)==0){
+			if (hp2>0 && is_alive(hp1)){
+				hp1 = DoDamage(hp1,special);
+				printf("%s have %d HP",n1,hp1);
+			}else{printf("\nESE PERSONAJE NO ESTA EN EL JUEGO O EL PERSONAJE YA ESTA MUERTO");} 
+		}
+	
+	}
+}
+
+int is_special(char* y,char* s){
+	return (strcmp(y,n1)==0)?scorpion_special(s):(strcmp(y,n2)==0?sindel_special(s):printf("ESE PERSONAJE NO ESTA EN EL JUEGO"));
+}
+
+int scorpion_special(char* s){
+	if(strcmp(s,"LLX")==0){
+		printf("\n%s - SPEAR\n",n1);
+		return 15;
+	}else if(strcmp(s,"DLY")==0){
+		printf("\n%s - DEMON FIRE\n",n1);
+		return 18;
+	}else if(strcmp(s,"DLB")==0){
+		printf("\n%s - TELEPORT\n",n1);
+		return 0;
+	}else  if(strcmp(s,"DLX")==0){
+		printf("\n%s - TAKEDOWN\n",n1);
+		return 12;
+	}else{
+		return -1;
+	}
+}
+
+int sindel_special(char* s){
+	if(strcmp(s,"DRX")==0){
+		printf("\nFIREBALL\n");
+		return 15;
+	}else if(strcmp(s,"DRA")==0){
+		printf("\nLOW FIREBALL\n");
+		return 10;
+	}else if(strcmp(s,"DLY")==0){
+		printf("\nSCREAM\n");
+		return 4;
+	}else if(strcmp(s,"DDU")==0){
+		printf("\nLEVITAR\n");
+		return 0;
+	}else if(strcmp(s,"DRY")==0){
+		printf("\nHAIR WHIP\n");
+		return 11;
+	}else if(strcmp(s,"DRB")==0){
+		printf("\nSTEP UP\n");
+		return 13;
+	}else{
+		return -1;
 	}
 }
 
