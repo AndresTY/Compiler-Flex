@@ -81,9 +81,7 @@ MK sections have a makefile to help with execution
 
 ## MK
 
-- ``` sh
-make clean - remove all .outs and program mk
-```
+- make clean - remove all .outs and program mk
 - make compiler - compiles the flex and bison files, generating the .c files to be used
 - make mk - compiles all the .c files creating the executable
 - make run [V1=] [V2=] - runs the program.
