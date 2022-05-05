@@ -12,22 +12,13 @@
 
 
 %%
-
-[+>;] { printf("%s",yytext[0]); /* use ASCII code for single-char token */}
-"for" { printf("LOOP"); }
-[0-9]+ { printf("INT "); }
-[a-z]+ { printf("IDENTIFIER "); }
-. ECHO;
+[+>;(){}] { return *yytext; /* use ASCII code for single-char token */}
+"for" { return T_For; }
+[0-9]+ { yylval = atoi(yytext);
+	return T_IntConstant; }
+[a-z]+ { yylval = strdup(yytext);
+	return T_Identifier; }
 
 %%
 
-
-
-int main(){
-	printf("->: ");
-	yylex();
-
-
-	return 0;
-}
 
